@@ -219,7 +219,7 @@ class PuzzleGame {
       return;
     }
     
-    if (!('serviceWorker' in navigator) || !('caches' in window)) {
+    if (!('caches' in window)) {
       alert('Your browser does not support offline mode');
       return;
     }
@@ -228,45 +228,54 @@ class PuzzleGame {
       this.downloadBtn.disabled = true;
       this.downloadDialog.classList.remove('hidden');
       
-      // Collect all files to cache
+      // Get absolute paths for caching
+      const baseUrl = window.location.origin;
+      const appPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+      
       const files = [
-        './',
-        './index.html',
-        './style.css',
-        './app.js',
-        '../../style.css'
+        `${baseUrl}${appPath}/index.html`,
+        `${baseUrl}${appPath}/style.css`,
+        `${baseUrl}${appPath}/app.js`,
+        `${baseUrl}/style.css`
       ];
       
-      // Send message to Service Worker
-      const registration = await navigator.serviceWorker.ready;
+      // Use direct cache API approach (iOS Safari compatible)
+      const cacheName = `app-${this.appName}-v1`;
+      const cache = await caches.open(cacheName);
       
-      return new Promise((resolve, reject) => {
-        const channel = new MessageChannel();
-        
-        channel.port1.onmessage = (event) => {
-          if (event.data.success) {
-            this.downloadDialog.classList.add('hidden');
-            this.downloadBtn.textContent = '✅ Downloaded for Offline';
-            alert('Game saved! You can now play offline.');
-            resolve();
+      // Cache files one by one for better error handling
+      let successCount = 0;
+      for (const file of files) {
+        try {
+          console.log('Fetching:', file);
+          const response = await fetch(file);
+          if (response.ok) {
+            await cache.put(file, response);
+            successCount++;
+            console.log('Cached:', file);
           } else {
-            reject(new Error(event.data.error));
+            console.warn('Failed to fetch:', file, response.status);
           }
-        };
-        
-        registration.controller.postMessage(
-          {
-            type: 'CACHE_APP',
-            appName: this.appName,
-            files: files
-          },
-          [channel.port2]
-        );
-      });
+        } catch (err) {
+          console.warn(`Failed to cache ${file}:`, err);
+        }
+      }
+      
+      this.downloadDialog.classList.add('hidden');
+      
+      if (successCount > 0) {
+        this.downloadBtn.textContent = '✅ Downloaded for Offline';
+        this.downloadBtn.disabled = true;
+        alert(`Game saved! ${successCount}/${files.length} files cached.\nYou can now play offline.`);
+      } else {
+        throw new Error('Failed to cache any files');
+      }
+      
     } catch (error) {
       console.error('Download failed:', error);
       alert('Failed to download: ' + error.message);
       this.downloadBtn.disabled = false;
+      this.downloadDialog.classList.add('hidden');
     }
   }
 
@@ -276,15 +285,21 @@ class PuzzleGame {
   }
 
   checkOfflineInstallation() {
+    // Only check in standalone mode
+    if (!this.isStandaloneMode()) {
+      return;
+    }
+    
     // Check if already installed offline
-    if ('serviceWorker' in navigator && 'caches' in window) {
-      navigator.serviceWorker.ready.then(() => {
-        caches.keys().then(names => {
-          if (names.includes(`app-${this.appName}-v1`)) {
-            this.downloadBtn.textContent = '✅ Downloaded for Offline';
-            this.downloadBtn.disabled = true;
-          }
-        });
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        console.log('Available caches:', names);
+        if (names.includes(`app-${this.appName}-v1`)) {
+          this.downloadBtn.textContent = '✅ Downloaded for Offline';
+          this.downloadBtn.disabled = true;
+        }
+      }).catch(err => {
+        console.warn('Failed to check caches:', err);
       });
     }
   }
