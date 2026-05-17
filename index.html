@@ -12,68 +12,272 @@
 </head>
 <body>
   <div class="container">
-    <header class="text-center mb-2">
-      <h1>🎮 Offline Apps Hub</h1>
-      <p>Download and play games offline • No internet required</p>
+    <header class="mb-2">
+      <div class="header-bar">
+        <h1 data-i18n="hub.title">🎮 Offline Apps Hub</h1>
+        <button id="lang-toggle" class="button button-small button-secondary" type="button"></button>
+      </div>
+      <p data-i18n="hub.subtitle">Download and play apps offline • No internet required</p>
     </header>
 
     <main>
-      <section class="grid grid-2">
-        <!-- 15 Puzzle App Card -->
-        <div class="card">
-          <div class="mb-1">
-            <h3>🧩 15 Puzzle</h3>
-            <p>Classic sliding number puzzle game. Arrange all numbers in order as quickly as possible.</p>
-          </div>
-          <div class="flex gap-1">
-            <a href="./apps/puzzle/" class="button button-primary">▶ Play</a>
-          </div>
-        </div>
-
-        <!-- More apps coming soon -->
-        <div class="card opacity-50">
-          <div class="mb-1">
-            <h3>🎯 Coming Soon</h3>
-            <p>More games will be added soon. Check back later!</p>
-          </div>
-          <button class="button button-secondary" disabled>Coming Soon</button>
-        </div>
+      <section class="filters mb-2">
+        <input id="app-search" type="search" class="filter-search"
+               data-i18n-attr="placeholder:hub.search.placeholder;aria-label:hub.search.aria">
+        <div id="category-chips" class="chip-row" role="tablist" aria-label="Category"></div>
+        <div id="subcategory-chips" class="chip-row chip-row-sub hidden" role="tablist" aria-label="Subcategory"></div>
       </section>
 
-      <section class="mt-2">
-        <h2>How to Play Offline</h2>
-        <div class="card">
-          <h4>Android (Chrome)</h4>
-          <ol style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
-            <li>Tap on any game to play it</li>
-            <li>Look for the "Download for Offline" button in the game</li>
-            <li>Tap it to save the game to your device</li>
-            <li>Play offline anytime!</li>
-          </ol>
+      <section id="apps-grid" class="grid grid-2"></section>
+      <p id="apps-empty" class="text-center mt-2 hidden" data-i18n="hub.empty">No apps match your filters.</p>
 
-          <h4>iOS (Safari)</h4>
-          <ol style="margin-left: 1.5rem;">
-            <li>Tap on any game to play it</li>
-            <li>Look for the "Download for Offline" button in the game</li>
-            <li>Follow the instructions to add to home screen</li>
-            <li>Play offline anytime!</li>
-          </ol>
+      <section class="mt-2">
+        <h2 data-i18n="hub.howto.title">How to Play Offline</h2>
+        <div class="card">
+          <h4 data-i18n="hub.howto.android">Android (Chrome)</h4>
+          <ol class="howto-list" data-i18n-html="hub.howto.androidSteps"></ol>
+
+          <h4 data-i18n="hub.howto.ios">iOS (Safari)</h4>
+          <ol class="howto-list" data-i18n-html="hub.howto.iosSteps"></ol>
         </div>
       </section>
     </main>
   </div>
 
+  <script src="./i18n.js"></script>
+  <script src="./apps.js"></script>
   <script>
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-        .then((registration) => {
-          console.log('Service Worker registered:', registration);
-        })
-        .catch((error) => {
-          console.error('Service Worker registration failed:', error);
+    (function () {
+      I18n.register({
+        ja: {
+          hub: {
+            title: '🎮 オフラインアプリハブ',
+            subtitle: 'アプリをダウンロードしてオフラインで遊ぼう • インターネット不要',
+            empty: '該当するアプリが見つかりません。',
+            search: {
+              placeholder: 'アプリを検索…',
+              aria: 'アプリを検索'
+            },
+            cardPlay: '▶ プレイ',
+            cardComingSoon: '近日公開',
+            howto: {
+              title: 'オフラインで遊ぶには',
+              android: 'Android (Chrome)',
+              ios: 'iOS (Safari)',
+              androidSteps:
+                '<li>遊びたいアプリのカードをタップ</li>' +
+                '<li>アプリ内の「オフライン用にダウンロード」ボタンを探す</li>' +
+                '<li>ボタンをタップして端末に保存</li>' +
+                '<li>いつでもオフラインで遊べます！</li>',
+              iosSteps:
+                '<li>遊びたいアプリのカードをタップ</li>' +
+                '<li>アプリ内の「オフライン用にダウンロード」ボタンを探す</li>' +
+                '<li>表示される手順に従ってホーム画面に追加</li>' +
+                '<li>いつでもオフラインで遊べます！</li>'
+            }
+          }
+        },
+        en: {
+          hub: {
+            title: '🎮 Offline Apps Hub',
+            subtitle: 'Download and play apps offline • No internet required',
+            empty: 'No apps match your filters.',
+            search: {
+              placeholder: 'Search apps…',
+              aria: 'Search apps'
+            },
+            cardPlay: '▶ Play',
+            cardComingSoon: 'Coming Soon',
+            howto: {
+              title: 'How to Play Offline',
+              android: 'Android (Chrome)',
+              ios: 'iOS (Safari)',
+              androidSteps:
+                '<li>Tap on any app to open it</li>' +
+                '<li>Look for the "Download for Offline" button inside</li>' +
+                '<li>Tap it to save the app to your device</li>' +
+                '<li>Play offline anytime!</li>',
+              iosSteps:
+                '<li>Tap on any app to open it</li>' +
+                '<li>Look for the "Download for Offline" button inside</li>' +
+                '<li>Follow the instructions to add to home screen</li>' +
+                '<li>Play offline anytime!</li>'
+            }
+          }
+        }
+      });
+
+      var state = { cat: 'all', sub: 'all', query: '' };
+
+      var gridEl = document.getElementById('apps-grid');
+      var emptyEl = document.getElementById('apps-empty');
+      var catRow = document.getElementById('category-chips');
+      var subRow = document.getElementById('subcategory-chips');
+      var searchEl = document.getElementById('app-search');
+
+      function catLabel(key) {
+        var c = window.CATEGORIES[key];
+        if (!c) return key;
+        return c[I18n.getLang()] || c.en || key;
+      }
+      function subLabel(key) {
+        var s = window.SUBCATEGORIES[key];
+        if (!s) return key;
+        return s[I18n.getLang()] || s.en || key;
+      }
+
+      function uniqueCats() {
+        var seen = {};
+        var out = ['all'];
+        window.APPS.forEach(function (a) {
+          if (!seen[a.category]) {
+            seen[a.category] = true;
+            out.push(a.category);
+          }
         });
-    }
+        return out;
+      }
+
+      function uniqueSubsFor(cat) {
+        var seen = {};
+        var out = ['all'];
+        window.APPS.forEach(function (a) {
+          if (cat !== 'all' && a.category !== cat) return;
+          if (!seen[a.subcategory]) {
+            seen[a.subcategory] = true;
+            out.push(a.subcategory);
+          }
+        });
+        return out;
+      }
+
+      function renderCategoryChips() {
+        catRow.innerHTML = '';
+        uniqueCats().forEach(function (key) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'chip' + (state.cat === key ? ' chip-active' : '');
+          b.setAttribute('role', 'tab');
+          b.setAttribute('aria-selected', state.cat === key ? 'true' : 'false');
+          b.textContent = catLabel(key);
+          b.addEventListener('click', function () {
+            state.cat = key;
+            state.sub = 'all';
+            renderCategoryChips();
+            renderSubcategoryChips();
+            renderApps();
+          });
+          catRow.appendChild(b);
+        });
+      }
+
+      function renderSubcategoryChips() {
+        subRow.innerHTML = '';
+        if (state.cat === 'all') {
+          subRow.classList.add('hidden');
+          return;
+        }
+        var subs = uniqueSubsFor(state.cat);
+        if (subs.length <= 2) {
+          // Only "all" + one subcategory — no point showing the row
+          subRow.classList.add('hidden');
+          return;
+        }
+        subRow.classList.remove('hidden');
+        subs.forEach(function (key) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'chip chip-sub' + (state.sub === key ? ' chip-active' : '');
+          b.setAttribute('role', 'tab');
+          b.setAttribute('aria-selected', state.sub === key ? 'true' : 'false');
+          b.textContent = subLabel(key);
+          b.addEventListener('click', function () {
+            state.sub = key;
+            renderSubcategoryChips();
+            renderApps();
+          });
+          subRow.appendChild(b);
+        });
+      }
+
+      function appMatches(a) {
+        if (state.cat !== 'all' && a.category !== state.cat) return false;
+        if (state.sub !== 'all' && a.subcategory !== state.sub) return false;
+        var q = state.query.trim().toLowerCase();
+        if (!q) return true;
+        var hay = [a.nameJa, a.nameEn, a.descJa, a.descEn].join(' ').toLowerCase();
+        return hay.indexOf(q) !== -1;
+      }
+
+      function renderApps() {
+        var lang = I18n.getLang();
+        var list = window.APPS.filter(appMatches);
+        gridEl.innerHTML = '';
+        if (list.length === 0) {
+          emptyEl.classList.remove('hidden');
+          return;
+        }
+        emptyEl.classList.add('hidden');
+
+        list.forEach(function (a) {
+          var card = document.createElement('div');
+          card.className = 'card' + (a.comingSoon ? ' opacity-50' : '');
+
+          var head = document.createElement('div');
+          head.className = 'mb-1';
+          var title = document.createElement('h3');
+          title.textContent = a.emoji + ' ' + (lang === 'ja' ? a.nameJa : a.nameEn);
+          var desc = document.createElement('p');
+          desc.textContent = lang === 'ja' ? a.descJa : a.descEn;
+          head.appendChild(title);
+          head.appendChild(desc);
+          card.appendChild(head);
+
+          var actions = document.createElement('div');
+          actions.className = 'flex gap-1';
+          if (a.comingSoon) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'button button-secondary';
+            btn.disabled = true;
+            btn.textContent = I18n.t('hub.cardComingSoon');
+            actions.appendChild(btn);
+          } else {
+            var link = document.createElement('a');
+            link.href = a.path;
+            link.className = 'button button-primary';
+            link.textContent = I18n.t('hub.cardPlay');
+            actions.appendChild(link);
+          }
+          card.appendChild(actions);
+
+          gridEl.appendChild(card);
+        });
+      }
+
+      function renderAll() {
+        renderCategoryChips();
+        renderSubcategoryChips();
+        renderApps();
+      }
+
+      searchEl.addEventListener('input', function (e) {
+        state.query = e.target.value;
+        renderApps();
+      });
+
+      I18n.mountToggle(document.getElementById('lang-toggle'));
+      window.addEventListener('i18nchange', renderAll);
+
+      renderAll();
+      I18n.apply();
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+          .then(function (reg) { console.log('Service Worker registered:', reg); })
+          .catch(function (err) { console.error('Service Worker registration failed:', err); });
+      }
+    })();
   </script>
 </body>
 </html>
