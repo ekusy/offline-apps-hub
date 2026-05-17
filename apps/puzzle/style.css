@@ -1,0 +1,220 @@
+/* ========== Puzzle Game Specific Styles ========== */
+
+.puzzle-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.puzzle-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* ========== Game Board ========== */
+.puzzle-board-wrapper {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+}
+
+.puzzle-board {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  aspect-ratio: 1;
+  width: 100%;
+}
+
+.tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  background-color: white;
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.tile:hover:not(.empty) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tile.empty {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  cursor: default;
+}
+
+.tile.movable {
+  background-color: var(--primary-light);
+  border-color: var(--primary-color);
+}
+
+/* ========== Game Info ========== */
+.puzzle-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.info-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* ========== Controls ========== */
+.puzzle-controls {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.puzzle-controls button {
+  flex: 1;
+}
+
+/* ========== Download Section ========== */
+.download-section {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* ========== Dialog ========== */
+.dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog.hidden {
+  display: none;
+}
+
+.dialog-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.dialog-content h3 {
+  margin-bottom: 1rem;
+}
+
+.dialog-content p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.dialog-content ol {
+  margin-bottom: 1rem;
+}
+
+.dialog-content li {
+  margin-bottom: 0.5rem;
+}
+
+/* ========== Progress Bar ========== */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 480px) {
+  .puzzle-board {
+    max-width: 300px;
+  }
+
+  .tile {
+    font-size: 1.25rem;
+  }
+
+  .puzzle-info {
+    max-width: 300px;
+  }
+
+  .puzzle-controls {
+    max-width: 300px;
+  }
+
+  .download-section {
+    max-width: 300px;
+  }
+
+  .dialog-content {
+    width: 95%;
+  }
+}
+
+/* ========== Win Animation ========== */
+@keyframes celebrate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.tile.solved {
+  animation: celebrate 0.5s ease;
+  background-color: var(--success-color);
+  color: white;
+  border-color: var(--primary-dark);
+}

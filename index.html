@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Download and play games offline">
+  <title>Offline Apps Hub</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%234CAF50' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' text-anchor='middle' dy='.3em' fill='white' font-family='Arial'>◉</text></svg>">
+  <link rel="stylesheet" href="./style.css">
+  <meta name="theme-color" content="#4CAF50">
+</head>
+<body>
+  <div class="container">
+    <header class="text-center mb-2">
+      <h1>🎮 Offline Apps Hub</h1>
+      <p>Download and play games offline • No internet required</p>
+    </header>
+
+    <main>
+      <section class="grid grid-2">
+        <!-- 15 Puzzle App Card -->
+        <div class="card">
+          <div class="mb-1">
+            <h3>🧩 15 Puzzle</h3>
+            <p>Classic sliding number puzzle game. Arrange all numbers in order as quickly as possible.</p>
+          </div>
+          <div class="flex gap-1">
+            <a href="./apps/puzzle/" class="button button-primary">▶ Play</a>
+          </div>
+        </div>
+
+        <!-- More apps coming soon -->
+        <div class="card opacity-50">
+          <div class="mb-1">
+            <h3>🎯 Coming Soon</h3>
+            <p>More games will be added soon. Check back later!</p>
+          </div>
+          <button class="button button-secondary" disabled>Coming Soon</button>
+        </div>
+      </section>
+
+      <section class="mt-2">
+        <h2>How to Play Offline</h2>
+        <div class="card">
+          <h4>Android (Chrome)</h4>
+          <ol style="margin-left: 1.5rem; margin-bottom: 1.5rem;">
+            <li>Tap on any game to play it</li>
+            <li>Look for the "Download for Offline" button in the game</li>
+            <li>Tap it to save the game to your device</li>
+            <li>Play offline anytime!</li>
+          </ol>
+
+          <h4>iOS (Safari)</h4>
+          <ol style="margin-left: 1.5rem;">
+            <li>Tap on any game to play it</li>
+            <li>Look for the "Download for Offline" button in the game</li>
+            <li>Follow the instructions to add to home screen</li>
+            <li>Play offline anytime!</li>
+          </ol>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered:', registration);
+        })
+        .catch((error) => {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+  </script>
+</body>
+</html>

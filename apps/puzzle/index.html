@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="15 Puzzle - Classic sliding number puzzle game">
+  <title>15 Puzzle</title>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container puzzle-container">
+    <header class="text-center mb-2">
+      <h1>🧩 15 Puzzle</h1>
+      <p>Arrange all numbers in order from 1 to 15</p>
+    </header>
+
+    <main>
+      <div class="puzzle-content">
+        <!-- Game Board -->
+        <div class="puzzle-board-wrapper">
+          <div id="puzzle-board" class="puzzle-board"></div>
+        </div>
+
+        <!-- Game Info -->
+        <div class="puzzle-info">
+          <div class="info-item">
+            <span class="info-label">Moves:</span>
+            <span id="moves" class="info-value">0</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Time:</span>
+            <span id="timer" class="info-value">00:00</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Best:</span>
+            <span id="best-moves" class="info-value">-</span>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="puzzle-controls">
+          <button id="shuffle-btn" class="button button-primary">🔀 Shuffle</button>
+          <button id="reset-btn" class="button button-secondary">↻ Reset</button>
+        </div>
+
+        <!-- Download Button -->
+        <div class="download-section mt-2">
+          <button id="download-btn" class="button button-primary" style="width: 100%;">
+            📥 Download for Offline
+          </button>
+          <p style="text-align: center; font-size: 0.875rem; margin-top: 0.5rem; color: var(--text-secondary);">
+            Save this game to play offline
+          </p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Download Progress Dialog -->
+  <div id="download-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3>Downloading...</h3>
+      <div class="progress-bar">
+        <div id="progress-fill" class="progress-fill"></div>
+      </div>
+      <p id="progress-text" style="text-align: center; margin-top: 1rem;">0%</p>
+    </div>
+  </div>
+
+  <!-- iOS Instructions Dialog -->
+  <div id="ios-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3>Add to Home Screen</h3>
+      <p>To play offline on iOS:</p>
+      <ol style="margin-left: 1.5rem;">
+        <li>Tap the <strong>Share</strong> button at the bottom</li>
+        <li>Scroll down and tap <strong>Add to Home Screen</strong></li>
+        <li>Name it "15 Puzzle" and tap <strong>Add</strong></li>
+      </ol>
+      <button id="ios-close-btn" class="button button-primary" style="width: 100%; margin-top: 1.5rem;">
+        Got it
+      </button>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "Offline Apps Hub",
+  "short_name": "Offline Apps",
+  "description": "Download and play apps offline",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4CAF50",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%234CAF50' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' text-anchor='middle' dy='.3em' fill='white' font-family='Arial'>◉</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
