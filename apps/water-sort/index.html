@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Water Sort Puzzle - Sort colored water between tubes">
+  <title>Water Sort Puzzle</title>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container ws-container">
+    <header class="mb-2">
+      <div class="header-bar">
+        <a href="../../" class="back-link" data-i18n="common.backHome">← Home</a>
+        <button id="lang-toggle" class="button button-small button-secondary" type="button"></button>
+      </div>
+      <div class="text-center">
+        <h1 data-i18n="ws.title">🧪 Water Sort Puzzle</h1>
+        <p data-i18n="ws.subtitle">Sort colored water until each tube holds a single color</p>
+      </div>
+    </header>
+
+    <main class="ws-main">
+      <div class="ws-toolbar">
+        <label class="ws-field">
+          <span data-i18n="ws.difficulty">Difficulty:</span>
+          <select id="ws-difficulty">
+            <option value="easy"   data-i18n="ws.easy">Easy</option>
+            <option value="normal" data-i18n="ws.normal">Normal</option>
+            <option value="hard"   data-i18n="ws.hard">Hard</option>
+          </select>
+        </label>
+        <button id="ws-new" class="button button-primary" data-i18n="ws.new">New Game</button>
+        <button id="ws-undo" class="button button-secondary" data-i18n="ws.undo">Undo</button>
+        <button id="ws-spoit" class="button button-secondary" type="button">
+          <span data-i18n="ws.spoit">Pipette</span>
+          <span id="ws-spoit-badge" class="badge">3</span>
+        </button>
+        <button id="ws-share" class="button button-secondary" data-i18n="ws.share">Share</button>
+      </div>
+
+      <div class="ws-stats">
+        <div class="ws-stat">
+          <span class="ws-stat-label" data-i18n="ws.moves">Moves:</span>
+          <span id="ws-moves" class="ws-stat-value">0</span>
+        </div>
+        <div class="ws-stat">
+          <span class="ws-stat-label" data-i18n="ws.time">Time:</span>
+          <span id="ws-time" class="ws-stat-value">00:00</span>
+        </div>
+        <div class="ws-stat">
+          <span class="ws-stat-label" data-i18n="ws.best">Best:</span>
+          <span id="ws-best" class="ws-stat-value">-</span>
+        </div>
+      </div>
+
+      <div id="ws-tubes" class="ws-tubes"></div>
+
+      <div class="ws-seed-bar">
+        <div class="ws-seed-line">
+          <span data-i18n="ws.seedLabel">Seed:</span>
+          <code id="ws-seed">-</code>
+        </div>
+        <div class="ws-seed-input">
+          <input id="ws-custom-seed" type="text" inputmode="numeric"
+                 data-i18n-attr="placeholder:ws.customSeedPh;aria-label:ws.customSeedPh">
+          <button id="ws-load-seed" class="button button-small button-secondary" data-i18n="ws.loadSeed">Load</button>
+        </div>
+      </div>
+
+      <div class="download-section mt-2">
+        <button id="download-btn" class="button button-primary" data-i18n="ws.download">
+          📥 Download for Offline
+        </button>
+        <p class="download-hint" data-i18n="ws.downloadHint">
+          Save this game to play offline
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Win modal -->
+  <div id="ws-win" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="ws.winTitle">🎉 Cleared!</h3>
+      <p id="ws-win-body"></p>
+      <div class="ws-win-actions">
+        <button id="ws-win-share" class="button button-secondary" data-i18n="ws.winShare">Share Seed</button>
+        <button id="ws-win-new" class="button button-primary" data-i18n="ws.winNew">New Game</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Download progress -->
+  <div id="download-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="ws.downloading">Downloading…</h3>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <p id="progress-text" style="text-align: center; margin-top: 1rem;">0%</p>
+    </div>
+  </div>
+
+  <!-- iOS install instructions -->
+  <div id="ios-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="ws.iosTitle">Add to Home Screen</h3>
+      <p data-i18n="ws.iosLead">To play offline on iOS:</p>
+      <ol class="ios-steps" data-i18n-html="ws.iosSteps"></ol>
+      <button id="ios-close-btn" class="button button-primary ws-close-ios" data-i18n="ws.iosGotIt">Got it</button>
+    </div>
+  </div>
+
+  <div id="ws-toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="../../i18n.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
