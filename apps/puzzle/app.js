@@ -291,16 +291,17 @@ class PuzzleGame {
       this.downloadBtn.disabled = true;
       this.downloadDialog.classList.remove('hidden');
 
-      const baseUrl = window.location.origin;
-      const appPath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
-
-      // Include /i18n.js so the language toggle keeps working offline.
+      // Resolve every URL against the current document so the cache keys
+      // match exactly what the browser will request — including when
+      // deployed at a sub-path (e.g. https://user.github.io/repo/).
+      // Include the shared root assets (style.css, i18n.js) so the page
+      // renders correctly and the language toggle still works offline.
       const files = [
-        `${baseUrl}${appPath}/index.html`,
-        `${baseUrl}${appPath}/style.css`,
-        `${baseUrl}${appPath}/app.js`,
-        `${baseUrl}/style.css`,
-        `${baseUrl}/i18n.js`
+        new URL('./index.html', window.location.href).href,
+        new URL('./style.css',  window.location.href).href,
+        new URL('./app.js',     window.location.href).href,
+        new URL('../../style.css', window.location.href).href,
+        new URL('../../i18n.js',   window.location.href).href
       ];
 
       const cacheName = `app-${this.appName}-v1`;

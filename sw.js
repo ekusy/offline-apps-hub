@@ -28,49 +28,69 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Only cache GET requests for app directories
+  // Only cache GET requests
   if (request.method !== 'GET') {
+    return;
+  }
+
+  // Skip cross-origin requests entirely
+  if (url.origin !== self.location.origin) {
     return;
   }
 
   // Check if this is a request for an app directory
   const appMatch = url.pathname.match(/\/apps\/([^/]+)\//);
-  if (!appMatch) {
-    return;
-  }
 
-  const appName = appMatch[1];
-  const cacheName = `app-${appName}-${CACHE_VERSION}`;
+  if (appMatch) {
+    const appName = appMatch[1];
+    const cacheName = `app-${appName}-${CACHE_VERSION}`;
 
-  event.respondWith(
-    caches.open(cacheName).then((cache) => {
-      return cache.match(request).then((response) => {
-        if (response) {
-          return response;
-        }
-
-        return fetch(request).then((response) => {
-          // Don't cache non-successful responses
-          if (!response || response.status !== 200 || response.type === 'error') {
+    event.respondWith(
+      caches.open(cacheName).then((cache) => {
+        return cache.match(request).then((response) => {
+          if (response) {
             return response;
           }
 
-          const responseToCache = response.clone();
-          cache.put(request, responseToCache);
-          return response;
-        }).catch(() => {
-          // Return offline page if available
-          return cache.match('/offline.html').catch(() => {
-            return new Response('Offline - App not downloaded', {
-              status: 503,
-              statusText: 'Service Unavailable',
-              headers: new Headers({
-                'Content-Type': 'text/plain'
-              })
+          return fetch(request).then((response) => {
+            // Don't cache non-successful responses
+            if (!response || response.status !== 200 || response.type === 'error') {
+              return response;
+            }
+
+            const responseToCache = response.clone();
+            cache.put(request, responseToCache);
+            return response;
+          }).catch(() => {
+            // Return offline page if available
+            return cache.match('/offline.html').catch(() => {
+              return new Response('Offline - App not downloaded', {
+                status: 503,
+                statusText: 'Service Unavailable',
+                headers: new Headers({
+                  'Content-Type': 'text/plain'
+                })
+              });
             });
           });
         });
-      });
+      })
+    );
+    return;
+  }
+
+  // Shared root assets (e.g. /style.css, /i18n.js): search every app cache.
+  // If any app downloaded these files, serve from cache; otherwise pass
+  // through to the network so the online hub keeps behaving normally.
+  event.respondWith(
+    caches.keys().then(async (names) => {
+      for (const name of names) {
+        if (!name.startsWith('app-')) continue;
+        const cache = await caches.open(name);
+        const hit = await cache.match(request);
+        if (hit) return hit;
+      }
+      return fetch(request);
     })
   );
 });
