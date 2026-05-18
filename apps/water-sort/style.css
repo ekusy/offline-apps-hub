@@ -1,0 +1,290 @@
+/* ========== Water Sort Puzzle ========== */
+
+.ws-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.ws-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+/* Toolbar */
+.ws-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+.ws-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+.ws-field select {
+  padding: 0.5rem 0.75rem;
+}
+#ws-spoit {
+  position: relative;
+  gap: 0.5rem;
+}
+#ws-spoit.spoit-active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-dark);
+}
+#ws-spoit:disabled {
+  opacity: 0.5;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--primary-dark);
+  color: white;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+}
+#ws-spoit.spoit-active .badge {
+  background: white;
+  color: var(--primary-dark);
+}
+
+/* Stats */
+.ws-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.ws-stat {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  min-width: 90px;
+}
+.ws-stat-label {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+.ws-stat-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* Tubes */
+.ws-tubes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1rem 0.5rem;
+}
+
+.ws-tube {
+  --tube-width: 56px;
+  --block-height: 48px;
+  width: var(--tube-width);
+  /* capacity is 4, room for 4 blocks + a little padding */
+  padding: 6px;
+  border: 3px solid #455a64;
+  border-top: none;
+  border-radius: 6px 6px 30px 30px;
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 2px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, outline-color 0.15s ease;
+  outline: 3px solid transparent;
+  outline-offset: 2px;
+}
+.ws-tube:hover {
+  transform: translateY(-4px);
+}
+.ws-tube-selected {
+  transform: translateY(-14px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+}
+.ws-tube-valid {
+  outline-color: var(--primary-color);
+  outline-style: dashed;
+}
+.ws-tube-spoit-source {
+  transform: translateY(-14px);
+  box-shadow: 0 8px 18px rgba(229, 57, 53, 0.35);
+  outline-color: #e53935;
+  outline-style: solid;
+}
+
+.ws-block {
+  height: var(--block-height);
+  border-radius: 3px;
+  background: transparent;
+  transition: transform 0.25s ease, background-color 0.2s ease, opacity 0.2s ease;
+  position: relative;
+}
+.ws-block.empty {
+  background: transparent;
+}
+
+/* Merge flash on adjacent same-color blocks after a spoit extraction */
+@keyframes ws-flash {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+  30%  { box-shadow: 0 0 14px 4px rgba(255, 255, 255, 0.95); filter: brightness(1.35); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); filter: brightness(1); }
+}
+.ws-merge-flash {
+  animation: ws-flash 0.6s ease;
+}
+
+/* Falling animation on spoit-removed blocks above the cut */
+@keyframes ws-fall {
+  from { transform: translateY(calc(-1 * (var(--block-height) + 2px))); }
+  to   { transform: translateY(0); }
+}
+.ws-block.falling {
+  animation: ws-fall 0.25s ease-out;
+}
+
+/* Spoit-mode hint: blocks become individually highlightable */
+.ws-tube.spoit-mode .ws-block:not(.empty) {
+  cursor: crosshair;
+}
+
+/* Seed bar */
+.ws-seed-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 520px;
+}
+.ws-seed-line {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+#ws-seed {
+  background: var(--bg-secondary);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  color: var(--text-primary);
+}
+.ws-seed-input {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+.ws-seed-input input {
+  flex: 1;
+}
+
+/* Download */
+.download-section {
+  width: 100%;
+  max-width: 520px;
+  text-align: center;
+}
+.download-hint {
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+}
+
+/* Dialog (mirror puzzle pattern, kept self-contained here) */
+.dialog {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.dialog.hidden {
+  display: none;
+}
+.dialog-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+.dialog-content h3 {
+  margin-bottom: 1rem;
+}
+.dialog-content p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+  white-space: pre-line;
+}
+.dialog-content ol {
+  margin-bottom: 1rem;
+}
+.dialog-content li {
+  margin-bottom: 0.5rem;
+}
+.ios-steps {
+  margin-left: 1.5rem;
+}
+.ws-close-ios {
+  width: 100%;
+  margin-top: 1.5rem;
+}
+.ws-win-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.ws-win-actions .button {
+  flex: 1;
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .ws-tube {
+    --tube-width: 48px;
+    --block-height: 42px;
+  }
+  .ws-toolbar .button,
+  .ws-toolbar select {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.9rem;
+  }
+}

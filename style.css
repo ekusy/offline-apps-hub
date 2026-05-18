@@ -194,3 +194,107 @@ input:focus, select:focus, textarea:focus {
 .p-2 { padding: 2rem; }
 .hidden { display: none; }
 .opacity-50 { opacity: 0.5; }
+
+/* ========== Header bar (title + lang toggle) ========== */
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.header-bar h1 {
+  margin-bottom: 0;
+}
+
+/* Hub filter section */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.filter-search {
+  width: 100%;
+}
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.chip-row-sub {
+  padding-left: 0.25rem;
+}
+.chip {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: white;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.chip:hover {
+  background: var(--bg-secondary);
+  transform: none;
+  box-shadow: none;
+}
+.chip-active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-dark);
+}
+.chip-active:hover {
+  background: var(--primary-dark);
+}
+.chip-sub {
+  font-size: 0.8125rem;
+  padding: 0.3rem 0.75rem;
+}
+.howto-list {
+  margin-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.howto-list:last-child {
+  margin-bottom: 0;
+}
+
+/* Back-to-hub link used on each app page */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.back-link:hover {
+  color: var(--primary-color);
+  background: var(--bg-secondary);
+}
+
+/* Toast (shared by hub and apps) */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 2rem;
+  transform: translateX(-50%);
+  background: rgba(33, 33, 33, 0.92);
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  z-index: 2000;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  max-width: 90vw;
+  text-align: center;
+}
+.toast.toast-visible {
+  opacity: 1;
+}
