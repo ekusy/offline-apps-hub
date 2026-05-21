@@ -105,9 +105,9 @@ const WS_I18N = {
 };
 
 const DIFFICULTY = {
-  easy:   { colors: 4, fullTubes: 4, emptyTubes: 2, capacity: 4 },
-  normal: { colors: 6, fullTubes: 6, emptyTubes: 2, capacity: 4 },
-  hard:   { colors: 8, fullTubes: 8, emptyTubes: 2, capacity: 4 }
+  easy:   { colors: 4, fullTubes: 4, emptyTubes: 2, capacity: 4, minAvgSpread: 1.0 },
+  normal: { colors: 6, fullTubes: 6, emptyTubes: 2, capacity: 4, minAvgSpread: 1.8 },
+  hard:   { colors: 8, fullTubes: 8, emptyTubes: 1, capacity: 4, minAvgSpread: 2.5 }
 };
 
 const PALETTE = [
@@ -137,6 +137,20 @@ function mulberry32(seed) {
 
 function randomUint32() {
   return (Math.random() * 0x100000000) >>> 0;
+}
+
+// Returns the average number of distinct tubes each color appears in.
+// Higher value = more fragmented = harder puzzle.
+function colorSpread(tubes, colorCount) {
+  let total = 0;
+  for (let c = 0; c < colorCount; c++) {
+    let count = 0;
+    for (let t = 0; t < tubes.length; t++) {
+      if (tubes[t].indexOf(c) !== -1) count++;
+    }
+    total += count;
+  }
+  return total / colorCount;
 }
 
 function deepCloneTubes(tubes) {
@@ -290,25 +304,34 @@ class WaterSort {
     this.capacity = cfg.capacity;
     this.colorCount = cfg.colors;
     this.tubeCount = cfg.fullTubes + cfg.emptyTubes;
-    this.seed = seed >>> 0;
 
     // Build flat multiset: each color × capacity copies.
     // NOTE: Pure shuffle is not provably solvable. The 3 pipette uses act as
     // a safety valve for tricky seeds; sharing seeds also lets players pick
     // known-good ones.
-    const rng = mulberry32(this.seed);
-    const flat = [];
-    for (let c = 0; c < cfg.colors; c++) {
-      for (let k = 0; k < cfg.capacity; k++) flat.push(c);
+    // Retry up to 100 seeds to find one meeting the fragmentation threshold.
+    // this.seed is set to the effective seed so URL sharing reproduces the exact puzzle.
+    let rngSeed = seed >>> 0;
+    let tubes;
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const rng = mulberry32(rngSeed);
+      const flat = [];
+      for (let c = 0; c < cfg.colors; c++) {
+        for (let k = 0; k < cfg.capacity; k++) flat.push(c);
+      }
+      for (let i = flat.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        const tmp = flat[i]; flat[i] = flat[j]; flat[j] = tmp;
+      }
+      tubes = [];
+      for (let t = 0; t < cfg.fullTubes; t++) {
+        tubes.push(flat.slice(t * cfg.capacity, (t + 1) * cfg.capacity));
+      }
+      if (colorSpread(tubes, cfg.colors) >= cfg.minAvgSpread) break;
+      rngSeed = (rngSeed + 1) >>> 0;
     }
-    for (let i = flat.length - 1; i > 0; i--) {
-      const j = Math.floor(rng() * (i + 1));
-      const tmp = flat[i]; flat[i] = flat[j]; flat[j] = tmp;
-    }
-    const tubes = [];
-    for (let t = 0; t < cfg.fullTubes; t++) {
-      tubes.push(flat.slice(t * cfg.capacity, (t + 1) * cfg.capacity));
-    }
+    this.seed = rngSeed;
+
     for (let e = 0; e < cfg.emptyTubes; e++) {
       tubes.push([]);
     }
