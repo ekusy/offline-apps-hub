@@ -107,7 +107,7 @@ const WS_I18N = {
 const DIFFICULTY = {
   easy:   { colors: 4, fullTubes: 4, emptyTubes: 2, capacity: 4, minAvgSpread: 1.0 },
   normal: { colors: 6, fullTubes: 6, emptyTubes: 2, capacity: 4, minAvgSpread: 1.8 },
-  hard:   { colors: 8, fullTubes: 8, emptyTubes: 1, capacity: 4, minAvgSpread: 2.5 }
+  hard:   { colors: 8, fullTubes: 8, emptyTubes: 2, capacity: 4, minAvgSpread: 2.5 }
 };
 
 const PALETTE = [
