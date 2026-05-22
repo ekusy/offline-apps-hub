@@ -10,7 +10,7 @@ const DG_I18N = {
       title: '🗡️ ダンジョンクローラー',
       subtitle: 'ターンベースで 10 階を踏破せよ',
       floor: '階:', hp: 'HP:', mp: 'MP:', lv: 'Lv:', exp: 'EXP:', gear: '装備:',
-      attack: '⚔️ 攻撃', magic: '✨ 魔法', defend: '🛡️ 防御', wait: '⏸ 待機', new: '🔀 新規',
+      attack: '⚔️ 攻撃', magic: '✨ 魔法(全方位)', defend: '🛡️ 防御', wait: '⏸ 待機', new: '🔀 新規',
       restart: '新しいゲーム',
       download: '📥 オフライン用にダウンロード',
       downloaded: '✅ オフラインで利用可能',
@@ -53,7 +53,7 @@ const DG_I18N = {
       title: '🗡️ Dungeon Crawler',
       subtitle: 'Turn-based 10-floor dungeon',
       floor: 'Floor:', hp: 'HP:', mp: 'MP:', lv: 'Lv:', exp: 'EXP:', gear: 'Gear:',
-      attack: '⚔️ Attack', magic: '✨ Magic', defend: '🛡️ Defend', wait: '⏸ Wait', new: '🔀 New',
+      attack: '⚔️ Attack', magic: '✨ Magic(AoE)', defend: '🛡️ Defend', wait: '⏸ Wait', new: '🔀 New',
       restart: 'New Game',
       download: '📥 Download for Offline',
       downloaded: '✅ Downloaded for Offline',
@@ -237,8 +237,12 @@ class DungeonGame {
       });
     }
 
-    const itemCount = 1 + rngInt(3);
-    const itemKinds = ['hp', 'mp', 'wpn', 'arm'];
+    // Item drops: every floor is guaranteed at least one gear item (weapon or
+    // armor) so the player can keep up with scaling. Remaining drops are weighted
+    // toward consumables.
+    const itemCount = 2 + rngInt(2); // 2-3 items per floor
+    const gearPool = ['wpn', 'arm'];
+    const consumablePool = ['hp', 'hp', 'mp', 'wpn', 'arm'];
     for (let i = 0; i < itemCount; i++) {
       let p;
       let tries = 0;
@@ -249,8 +253,13 @@ class DungeonGame {
       } while (occupied.has(p));
       if (tries > 40) break;
       occupied.add(p);
-      const kind = itemKinds[rngInt(itemKinds.length)];
-      const value = kind === 'hp' ? 12 + rngInt(8) : kind === 'mp' ? 4 + rngInt(4) : 1 + Math.floor(this.floor / 2);
+      // First item slot of each floor is guaranteed to be gear.
+      const kind = i === 0
+        ? gearPool[rngInt(gearPool.length)]
+        : consumablePool[rngInt(consumablePool.length)];
+      const value = kind === 'hp' ? 12 + rngInt(8)
+                  : kind === 'mp' ? 4 + rngInt(4)
+                  : 1 + Math.floor((this.floor + 1) / 2); // gear scales faster
       this.items.push({ c: p % GRID, r: Math.floor(p / GRID), kind, value });
     }
 
@@ -267,8 +276,13 @@ class DungeonGame {
     return ['slime', 'slime', 'goblin'];
   }
 
+  // Chebyshev — used only for "don't spawn an enemy right next to the player".
   isAdjacent(c1, r1, c2, r2) {
     return Math.max(Math.abs(c1 - c2), Math.abs(r1 - r2)) <= 1;
+  }
+  // Manhattan — players and enemies can only act on the four cardinal neighbors.
+  isCardinalAdjacent(c1, r1, c2, r2) {
+    return Math.abs(c1 - c2) + Math.abs(r1 - r2) === 1;
   }
 
   revealFog() {
@@ -333,6 +347,16 @@ class DungeonGame {
     this.endPlayerTurn();
   }
 
+  adjacentEnemies() {
+    const dirs = [[0,-1],[0,1],[-1,0],[1,0]];
+    const list = [];
+    for (const [dc, dr] of dirs) {
+      const e = this.enemyAt(this.player.c + dc, this.player.r + dr);
+      if (e) list.push(e);
+    }
+    return list;
+  }
+
   attackAdjacent(target) {
     const dmg = Math.max(1, this.player.atk + this.player.weaponAtk - target.def);
     target.hp -= dmg;
@@ -350,25 +374,24 @@ class DungeonGame {
       this.renderAll();
       return;
     }
-    const dirs = [[0,-1],[0,1],[-1,0],[1,0]];
-    let target = null;
-    for (const [dc, dr] of dirs) {
-      const e = this.enemyAt(this.player.c + dc, this.player.r + dr);
-      if (e) { target = e; break; }
-    }
-    if (!target) {
+    const targets = this.adjacentEnemies();
+    if (targets.length === 0) {
       this.pushLog(I18n.t('dg.log.attackNoTarget'));
       this.renderAll();
       return;
     }
     this.player.mp -= 4;
     const dmg = Math.max(1, Math.round((this.player.atk + this.player.weaponAtk) * 1.5));
-    target.hp -= dmg;
-    this.maxDamage = Math.max(this.maxDamage, dmg);
-    this.pushLog(I18n.t('dg.log.magic')
-      .replace('{enemy}', I18n.t('dg.enemy.' + target.type))
-      .replace('{dmg}', String(dmg)));
-    if (target.hp <= 0) this.killEnemy(target);
+    // AoE: hit every cardinally-adjacent enemy. Defense still applies per target.
+    for (const target of targets) {
+      const applied = Math.max(1, dmg - Math.floor(target.def / 2));
+      target.hp -= applied;
+      this.maxDamage = Math.max(this.maxDamage, applied);
+      this.pushLog(I18n.t('dg.log.magic')
+        .replace('{enemy}', I18n.t('dg.enemy.' + target.type))
+        .replace('{dmg}', String(applied)));
+      if (target.hp <= 0) this.killEnemy(target);
+    }
     this.endPlayerTurn();
   }
 
@@ -449,7 +472,7 @@ class DungeonGame {
   enemyTurn(e) {
     const dr = Math.sign(this.player.r - e.r);
     const dc = Math.sign(this.player.c - e.c);
-    if (this.isAdjacent(e.c, e.r, this.player.c, this.player.r)) {
+    if (this.isCardinalAdjacent(e.c, e.r, this.player.c, this.player.r)) {
       let dmg = Math.max(1, e.atk - this.player.def - this.player.armorDef);
       if (this.player.defendingNext) dmg = Math.max(1, Math.ceil(dmg / 2));
       this.player.hp -= dmg;
