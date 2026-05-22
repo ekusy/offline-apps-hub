@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dungeon Crawler - Turn-based grid RPG, playable offline">
+  <title>Dungeon Crawler</title>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container dg-container">
+    <header class="mb-2">
+      <div class="header-bar">
+        <a href="../../" class="back-link" data-i18n="common.backHome">← Home</a>
+        <button id="lang-toggle" class="button button-small button-secondary" type="button"></button>
+      </div>
+      <div class="text-center">
+        <h1 data-i18n="dg.title">🗡️ Dungeon Crawler</h1>
+        <p data-i18n="dg.subtitle">Turn-based dungeon exploration</p>
+      </div>
+    </header>
+
+    <main class="dg-main">
+      <div class="dg-stats">
+        <div class="dg-stat" data-i18n-attr="title:dg.floorTip">
+          <span class="dg-stat-label" data-i18n="dg.floor">Floor:</span>
+          <span id="dg-floor" class="dg-stat-value">1</span>
+        </div>
+        <div class="dg-stat">
+          <span class="dg-stat-label" data-i18n="dg.hp">HP:</span>
+          <span id="dg-hp" class="dg-stat-value">30/30</span>
+        </div>
+        <div class="dg-stat">
+          <span class="dg-stat-label" data-i18n="dg.mp">MP:</span>
+          <span id="dg-mp" class="dg-stat-value">10/10</span>
+        </div>
+        <div class="dg-stat">
+          <span class="dg-stat-label" data-i18n="dg.lv">Lv:</span>
+          <span id="dg-lv" class="dg-stat-value">1</span>
+        </div>
+        <div class="dg-stat">
+          <span class="dg-stat-label" data-i18n="dg.exp">EXP:</span>
+          <span id="dg-exp" class="dg-stat-value">0</span>
+        </div>
+        <div class="dg-stat">
+          <span class="dg-stat-label" data-i18n="dg.gear">Gear:</span>
+          <span id="dg-gear" class="dg-stat-value">⚔️0 🛡️0</span>
+        </div>
+      </div>
+
+      <div id="dg-grid" class="dg-grid"></div>
+
+      <div class="dg-controls">
+        <div class="dg-dpad">
+          <button id="dg-up" class="dg-pad-btn dg-up">↑</button>
+          <div class="dg-dpad-mid">
+            <button id="dg-left" class="dg-pad-btn">←</button>
+            <button id="dg-wait" class="dg-pad-btn dg-wait" data-i18n="dg.wait">⏸</button>
+            <button id="dg-right" class="dg-pad-btn">→</button>
+          </div>
+          <button id="dg-down" class="dg-pad-btn dg-down">↓</button>
+        </div>
+        <div class="dg-actions">
+          <button id="dg-attack" class="button button-primary" data-i18n="dg.attack">⚔️ Attack</button>
+          <button id="dg-magic" class="button button-secondary" data-i18n="dg.magic">✨ Magic</button>
+          <button id="dg-defend" class="button button-secondary" data-i18n="dg.defend">🛡️ Defend</button>
+          <button id="dg-new" class="button button-secondary" data-i18n="dg.new">🔀 New</button>
+        </div>
+      </div>
+
+      <div class="dg-log" id="dg-log"></div>
+
+      <div class="download-section mt-2">
+        <button id="download-btn" class="button button-primary" data-i18n="dg.download">
+          📥 Download for Offline
+        </button>
+        <p class="download-hint" data-i18n="dg.downloadHint">
+          Save this game to play offline
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <div id="dg-end" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 id="dg-end-title"></h3>
+      <p id="dg-end-body"></p>
+      <div class="dg-end-actions">
+        <button id="dg-end-restart" class="button button-primary" data-i18n="dg.restart">New Game</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="download-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="dg.downloading">Downloading…</h3>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <p id="progress-text" style="text-align: center; margin-top: 1rem;">0%</p>
+    </div>
+  </div>
+
+  <div id="ios-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="dg.iosTitle">Add to Home Screen</h3>
+      <p data-i18n="dg.iosLead">To play offline on iOS:</p>
+      <ol class="ios-steps" data-i18n-html="dg.iosSteps"></ol>
+      <button id="ios-close-btn" class="button button-primary dg-close-ios" data-i18n="dg.iosGotIt">Got it</button>
+    </div>
+  </div>
+
+  <div id="dg-toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="../../i18n.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

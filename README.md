@@ -37,6 +37,11 @@ PWA-based offline app hub for playing games and using apps without internet conn
 ## Apps Included
 
 - **15 Puzzle** - Classic sliding number puzzle game
+- **Water Sort Puzzle** - Sort colored water between tubes
+- **Sudoku** - Classic 9x9 number puzzle with notes and difficulty levels
+- **Tower Defense** - Place towers and defend against 10 waves
+- **Dungeon Crawler** - Turn-based 7x7 grid RPG across 10 floors
+- **Card Battle** - Deck-building card combat through 5 stages
 - More games coming soon...
 
 ## Project Structure

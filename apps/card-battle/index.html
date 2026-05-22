@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Card Battle - Deck-building card combat, playable offline">
+  <title>Card Battle</title>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container cb-container">
+    <header class="mb-2">
+      <div class="header-bar">
+        <a href="../../" class="back-link" data-i18n="common.backHome">← Home</a>
+        <button id="lang-toggle" class="button button-small button-secondary" type="button"></button>
+      </div>
+      <div class="text-center">
+        <h1 data-i18n="cb.title">🎴 Card Battle</h1>
+        <p data-i18n="cb.subtitle">Build your deck and duel the enemy</p>
+      </div>
+    </header>
+
+    <main class="cb-main">
+      <div class="cb-views">
+        <button id="cb-view-battle" class="cb-tab cb-tab-active" data-i18n="cb.tabBattle">Battle</button>
+        <button id="cb-view-deck" class="cb-tab" data-i18n="cb.tabDeck">Deck Editor</button>
+      </div>
+
+      <section id="cb-battle" class="cb-section">
+        <div class="cb-row cb-enemy-row">
+          <div class="cb-portrait" id="cb-enemy-port">👹</div>
+          <div class="cb-status">
+            <div class="cb-hp"><span data-i18n="cb.hp">HP:</span> <span id="cb-enemy-hp">20</span>/<span id="cb-enemy-maxhp">20</span></div>
+            <div class="cb-shield">🛡️ <span id="cb-enemy-shield">0</span></div>
+            <div class="cb-energy">⚡ <span id="cb-enemy-energy">1</span></div>
+            <div class="cb-cards"><span data-i18n="cb.cards">Cards:</span> <span id="cb-enemy-cards">5</span></div>
+          </div>
+        </div>
+
+        <div class="cb-log" id="cb-log"></div>
+
+        <div class="cb-row cb-player-row">
+          <div class="cb-portrait" id="cb-player-port">🧙</div>
+          <div class="cb-status">
+            <div class="cb-hp"><span data-i18n="cb.hp">HP:</span> <span id="cb-player-hp">20</span>/<span id="cb-player-maxhp">20</span></div>
+            <div class="cb-shield">🛡️ <span id="cb-player-shield">0</span></div>
+            <div class="cb-energy">⚡ <span id="cb-player-energy">1</span>/<span id="cb-player-maxenergy">10</span></div>
+            <div class="cb-buff">💪 <span id="cb-player-buff">0</span></div>
+          </div>
+        </div>
+
+        <div class="cb-hand" id="cb-hand"></div>
+
+        <div class="cb-actions">
+          <span class="cb-pile" data-i18n-attr="title:cb.deckTip">📚 <span id="cb-deck-n">0</span></span>
+          <span class="cb-pile" data-i18n-attr="title:cb.discardTip">🗑 <span id="cb-discard-n">0</span></span>
+          <button id="cb-end" class="button button-primary" data-i18n="cb.endTurn">End Turn</button>
+          <span class="cb-pile">
+            <span data-i18n="cb.stage">Stage:</span>
+            <span id="cb-stage">1</span>/5
+          </span>
+        </div>
+      </section>
+
+      <section id="cb-deck-section" class="cb-section hidden">
+        <p data-i18n="cb.deckEditor">Pick 8 cards for your deck.</p>
+        <div class="cb-deck-counter">
+          <span data-i18n="cb.selected">Selected:</span>
+          <span id="cb-deck-count">0</span>/8
+          <button id="cb-deck-save" class="button button-primary" data-i18n="cb.save">Save</button>
+          <button id="cb-deck-reset" class="button button-secondary" data-i18n="cb.resetDeck">Default</button>
+        </div>
+        <div id="cb-deck-grid" class="cb-deck-grid"></div>
+      </section>
+
+      <div class="download-section mt-2">
+        <button id="download-btn" class="button button-primary" data-i18n="cb.download">
+          📥 Download for Offline
+        </button>
+        <p class="download-hint" data-i18n="cb.downloadHint">
+          Save this game to play offline
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <div id="cb-end-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 id="cb-end-title"></h3>
+      <p id="cb-end-body"></p>
+      <div class="cb-end-actions">
+        <button id="cb-end-next" class="button button-primary" data-i18n="cb.next">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="download-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="cb.downloading">Downloading…</h3>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <p id="progress-text" style="text-align: center; margin-top: 1rem;">0%</p>
+    </div>
+  </div>
+
+  <div id="ios-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="cb.iosTitle">Add to Home Screen</h3>
+      <p data-i18n="cb.iosLead">To play offline on iOS:</p>
+      <ol class="ios-steps" data-i18n-html="cb.iosSteps"></ol>
+      <button id="ios-close-btn" class="button button-primary cb-close-ios" data-i18n="cb.iosGotIt">Got it</button>
+    </div>
+  </div>
+
+  <div id="cb-toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="../../i18n.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
