@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sudoku - Classic 9x9 number puzzle, playable offline">
+  <title>Sudoku</title>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container sd-container">
+    <header class="mb-2">
+      <div class="header-bar">
+        <a href="../../" class="back-link" data-i18n="common.backHome">← Home</a>
+        <button id="lang-toggle" class="button button-small button-secondary" type="button"></button>
+      </div>
+      <div class="text-center">
+        <h1 data-i18n="sudoku.title">🔢 Sudoku</h1>
+        <p data-i18n="sudoku.subtitle">Fill the 9x9 grid with digits 1-9</p>
+      </div>
+    </header>
+
+    <main class="sd-main">
+      <div class="sd-toolbar">
+        <label class="sd-field">
+          <span data-i18n="sudoku.difficulty">Difficulty:</span>
+          <select id="sd-difficulty">
+            <option value="easy"   data-i18n="sudoku.easy">Easy</option>
+            <option value="normal" data-i18n="sudoku.normal">Normal</option>
+            <option value="hard"   data-i18n="sudoku.hard">Hard</option>
+          </select>
+        </label>
+        <button id="sd-new" class="button button-primary" data-i18n="sudoku.new">New Game</button>
+        <button id="sd-undo" class="button button-secondary" data-i18n="sudoku.undo">Undo</button>
+        <button id="sd-note" class="button button-secondary" type="button" aria-pressed="false">
+          <span data-i18n="sudoku.note">Notes</span>
+        </button>
+        <label class="sd-field sd-toggle">
+          <input id="sd-errors" type="checkbox">
+          <span data-i18n="sudoku.errors">Show Errors</span>
+        </label>
+      </div>
+
+      <div class="sd-stats">
+        <div class="sd-stat">
+          <span class="sd-stat-label" data-i18n="sudoku.moves">Moves:</span>
+          <span id="sd-moves" class="sd-stat-value">0</span>
+        </div>
+        <div class="sd-stat">
+          <span class="sd-stat-label" data-i18n="sudoku.time">Time:</span>
+          <span id="sd-time" class="sd-stat-value">00:00</span>
+        </div>
+        <div class="sd-stat">
+          <span class="sd-stat-label" data-i18n="sudoku.best">Best:</span>
+          <span id="sd-best" class="sd-stat-value">-</span>
+        </div>
+      </div>
+
+      <div id="sd-board" class="sd-board" role="grid" aria-label="Sudoku board"></div>
+
+      <div class="sd-pad">
+        <button class="sd-pad-btn" data-num="1">1</button>
+        <button class="sd-pad-btn" data-num="2">2</button>
+        <button class="sd-pad-btn" data-num="3">3</button>
+        <button class="sd-pad-btn" data-num="4">4</button>
+        <button class="sd-pad-btn" data-num="5">5</button>
+        <button class="sd-pad-btn" data-num="6">6</button>
+        <button class="sd-pad-btn" data-num="7">7</button>
+        <button class="sd-pad-btn" data-num="8">8</button>
+        <button class="sd-pad-btn" data-num="9">9</button>
+        <button class="sd-pad-btn sd-pad-erase" data-num="0" data-i18n="sudoku.erase">✕</button>
+      </div>
+
+      <div class="download-section mt-2">
+        <button id="download-btn" class="button button-primary" data-i18n="sudoku.download">
+          📥 Download for Offline
+        </button>
+        <p class="download-hint" data-i18n="sudoku.downloadHint">
+          Save this game to play offline
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <div id="sd-win" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="sudoku.winTitle">🎉 Cleared!</h3>
+      <p id="sd-win-body"></p>
+      <div class="sd-win-actions">
+        <button id="sd-win-new" class="button button-primary" data-i18n="sudoku.winNew">New Game</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="download-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="sudoku.downloading">Downloading…</h3>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <p id="progress-text" style="text-align: center; margin-top: 1rem;">0%</p>
+    </div>
+  </div>
+
+  <div id="ios-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="sudoku.iosTitle">Add to Home Screen</h3>
+      <p data-i18n="sudoku.iosLead">To play offline on iOS:</p>
+      <ol class="ios-steps" data-i18n-html="sudoku.iosSteps"></ol>
+      <button id="ios-close-btn" class="button button-primary sd-close-ios" data-i18n="sudoku.iosGotIt">Got it</button>
+    </div>
+  </div>
+
+  <div id="sd-toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="../../i18n.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

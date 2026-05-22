@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tower Defense - Defend against enemy waves with strategic tower placement">
+  <title>Tower Defense</title>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container td-container">
+    <header class="mb-2">
+      <div class="header-bar">
+        <a href="../../" class="back-link" data-i18n="common.backHome">← Home</a>
+        <button id="lang-toggle" class="button button-small button-secondary" type="button"></button>
+      </div>
+      <div class="text-center">
+        <h1 data-i18n="td.title">🏰 Tower Defense</h1>
+        <p data-i18n="td.subtitle">Place towers to stop the enemy waves</p>
+      </div>
+    </header>
+
+    <main class="td-main">
+      <div class="td-hud">
+        <div class="td-hud-item">❤️ <span id="td-lives">10</span></div>
+        <div class="td-hud-item">💰 <span id="td-gold">100</span></div>
+        <div class="td-hud-item"><span data-i18n="td.wave">Wave:</span> <span id="td-wave">0</span>/10</div>
+        <div class="td-hud-item">
+          <button id="td-speed" class="button button-small button-secondary">1x</button>
+        </div>
+        <div class="td-hud-item">
+          <button id="td-start" class="button button-small button-primary" data-i18n="td.start">Start Wave</button>
+        </div>
+      </div>
+
+      <div class="td-canvas-wrap">
+        <canvas id="td-canvas" width="720" height="540"></canvas>
+      </div>
+
+      <div class="td-pal" id="td-pal"></div>
+
+      <div class="td-info" id="td-info">
+        <span data-i18n="td.tap">Tap an empty grass tile to build, tap a tower to sell.</span>
+      </div>
+
+      <div class="download-section mt-2">
+        <button id="download-btn" class="button button-primary" data-i18n="td.download">
+          📥 Download for Offline
+        </button>
+        <p class="download-hint" data-i18n="td.downloadHint">
+          Save this game to play offline
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <div id="td-end" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 id="td-end-title"></h3>
+      <p id="td-end-body"></p>
+      <div class="td-end-actions">
+        <button id="td-end-restart" class="button button-primary" data-i18n="td.restart">Restart</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="download-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="td.downloading">Downloading…</h3>
+      <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+      <p id="progress-text" style="text-align: center; margin-top: 1rem;">0%</p>
+    </div>
+  </div>
+
+  <div id="ios-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <h3 data-i18n="td.iosTitle">Add to Home Screen</h3>
+      <p data-i18n="td.iosLead">To play offline on iOS:</p>
+      <ol class="ios-steps" data-i18n-html="td.iosSteps"></ol>
+      <button id="ios-close-btn" class="button button-primary td-close-ios" data-i18n="td.iosGotIt">Got it</button>
+    </div>
+  </div>
+
+  <div id="td-toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="../../i18n.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
